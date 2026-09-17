@@ -1,1 +1,1283 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lembaga Infaq Nurul Hayah</title>
+  
+  <!-- Favicon / Web Icon Resmi -->
+  <link rel="icon" type="image/jpeg" href="https://www.upload.ee/image/19709356/Primary_Logo_1.jpg.jpeg">
+  <link rel="shortcut icon" type="image/jpeg" href="https://www.upload.ee/image/19709356/Primary_Logo_1.jpg.jpeg">
 
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Inter CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- React 18 & ReactDOM 18 & Babel Standalone via CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Supabase JS Client v2 CDN -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-800 antialiased selection:bg-[#1F5946] selection:text-white">
+
+  <!-- React Mounting Container -->
+  <div id="root"></div>
+
+  <script type="text/babel">
+    // Konfigurasi Supabase Resmi (Project Ref: dxtuadkxzzcwyhwnatdt)
+    const SUPABASE_URL = "https://dxtuadkxzzcwyhwnatdt.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4dHVhZGt4enpjd3lod25hdGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNTA0ODMsImV4cCI6MjEwMzkyNjQ4M30.XNxdbrFNcjDht97OAR3Mj4q2_AACjTvbHDCyIW8a7_0";
+    
+    let supabaseClient = null;
+    try {
+      if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    } catch (e) {
+      console.warn("Supabase init error:", e);
+    }
+
+    const { useState, useEffect, useMemo } = React;
+
+    const INITIAL_SETTINGS = {
+      orgName: "Lembaga Infaq Nurul Hayah",
+      tagline: "Amanah Bersama, Sejahtera dan Berdaya",
+      subTagline: "Berbagi Kebaikan, Menebar Kebermanfaatan",
+      description: "Lembaga Infaq Nurul Hayah mengelola dan menyalurkan dana infaq secara transparan, amanah, dan profesional demi menghadirkan pendidikan berkualitas serta kesejahteraan bagi santri dan dhuafa di seluruh Indonesia.",
+      address: "Jl. Lingkar Provinsi No.07, Sawah, Bulakelor, Ketanggungan, Brebes Regency",
+      whatsapp: "+62 823-3336-2299",
+      email: "infaqnuha@gmail.com",
+      tiktok: "Lembaga Infaq Nurul Hayah",
+      instagram: "Lembaga Infaq Nurul Hayah",
+      facebook: "Lembaga Infaq Nurul Hayah",
+      logoUrl: "https://www.upload.ee/image/19709356/Primary_Logo_1.jpg.jpeg"
+    };
+
+    // Data murni kosong di awal - hanya menampilkan data asli dari Supabase / Admin Panel
+    const INITIAL_PROGRAMS = [];
+    const INITIAL_GALLERY = [];
+    const INITIAL_DONATIONS = [];
+
+    const formatIDR = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num || 0);
+    const formatNumber = (num) => new Intl.NumberFormat('id-ID').format(num || 0);
+
+    function NurulHayahLogo({ size = "default", className = "" }) {
+      const isSmall = size === "small";
+      const isLarge = size === "large";
+      const imgSize = isSmall ? "w-9 h-9" : isLarge ? "w-14 h-14" : "w-11 h-11";
+
+      return (
+        <div className={`flex items-center space-x-3.5 select-none ${className}`}>
+          <img 
+            src={INITIAL_SETTINGS.logoUrl} 
+            alt="Lembaga Infaq Nurul Hayah" 
+            className={`${imgSize} object-contain rounded-lg flex-shrink-0 shadow-sm`}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://placehold.co/100x100/1F5946/FFFFFF?text=NH";
+            }}
+          />
+          <div className="flex flex-col justify-center text-left">
+            <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.22em] text-[#1F5946] uppercase leading-none mb-0.5">
+              LEMBAGA INFAQ
+            </span>
+            <span className="text-base sm:text-xl font-black text-[#1F5946] tracking-tight leading-tight">
+              Nurul Hayah
+            </span>
+            {!isSmall && (
+              <span className="text-[9px] sm:text-[10px] font-medium text-[#B89355] tracking-wide leading-none mt-0.5">
+                Amanah Bersama, Sejahtera dan Berdaya
+              </span>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const Icons = {
+      Heart: () => <svg className="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>,
+      Users: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>,
+      ArrowRight: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>,
+      Menu: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>,
+      X: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>,
+      WhatsApp: () => <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>,
+      Instagram: () => <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>,
+      TikTok: () => <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68a6.34 6.34 0 0 0 10.86 4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.04z"/></svg>,
+      YouTube: () => <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>,
+      Facebook: () => <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>,
+      ChevronLeft: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>,
+      ChevronRight: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>,
+      Layers: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>,
+      MapPin: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
+      Phone: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>,
+      Mail: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>,
+      CheckCircle: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    };
+
+    function App() {
+      const [settings, setSettings] = useState(INITIAL_SETTINGS);
+      const [programs, setPrograms] = useState(INITIAL_PROGRAMS);
+      const [donations, setDonations] = useState(INITIAL_DONATIONS);
+      const [gallery, setGallery] = useState(INITIAL_GALLERY);
+      const [isLoading, setIsLoading] = useState(true);
+
+      const [currentRoute, setCurrentRoute] = useState('home');
+      const [selectedProgram, setSelectedProgram] = useState(null);
+      const [infaqSuccessData, setInfaqSuccessData] = useState(null);
+
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+      const [selectedCategory, setSelectedCategory] = useState("Semua");
+      const [galleryCategory, setGalleryCategory] = useState("Semua");
+      const [toastMessage, setToastMessage] = useState(null);
+
+      // Effect utama fetching data otomatis saat load
+      useEffect(() => {
+        async function fetchInitialData() {
+          if (!supabaseClient) {
+            setIsLoading(false);
+            return;
+          }
+          try {
+            // 1. Fetch Data Program Infaq
+            const { data: progData, error: progErr } = await supabaseClient
+              .from('programs')
+              .select('*')
+              .order('created_at', { ascending: false });
+
+            if (!progErr && progData) {
+              const formattedPrograms = progData.map(p => ({
+                id: p.id,
+                title: p.title,
+                category: p.category || 'Pendidikan',
+                description: p.description || '',
+                fullContent: p.full_content || p.description || '',
+                targetAmount: Number(p.target_amount || 0),
+                currentAmount: Number(p.current_amount || 0),
+                beneficiaries: Number(p.beneficiaries || 0),
+                imageUrl: p.image_url || '',
+                status: p.status || 'Aktif'
+              }));
+              setPrograms(formattedPrograms);
+            }
+
+            // 2. Fetch Data Transaksi Infaq
+            const { data: donData, error: donErr } = await supabaseClient
+              .from('donations')
+              .select('*')
+              .order('created_at', { ascending: false });
+
+            if (!donErr && donData) {
+              setDonations(donData.map(d => ({
+                id: d.id,
+                donorName: d.donor_name || 'Hamba Allah',
+                amount: Number(d.amount || 0),
+                programTitle: d.program_title || 'Infaq Umum',
+                paymentMethod: d.payment_method || 'WhatsApp Transfer',
+                status: d.status || 'Terverifikasi',
+                date: new Date(d.created_at).toLocaleString('id-ID'),
+                notes: d.notes || ''
+              })));
+            }
+
+            // 3. Fetch Data Galeri Kegiatan
+            const { data: galData, error: galErr } = await supabaseClient
+              .from('gallery')
+              .select('*')
+              .order('created_at', { ascending: false });
+
+            if (!galErr && galData) {
+              setGallery(galData.map(g => ({
+                id: g.id,
+                title: g.title,
+                category: g.category || 'Pendidikan',
+                description: g.description || '',
+                imageUrl: g.image_url || ''
+              })));
+            }
+
+            // 4. Fetch Pengaturan Organisasi
+            const { data: setDb, error: setErr } = await supabaseClient
+              .from('settings')
+              .select('*')
+              .maybeSingle();
+
+            if (!setErr && setDb) {
+              setSettings({
+                orgName: setDb.org_name || INITIAL_SETTINGS.orgName,
+                tagline: setDb.tagline || INITIAL_SETTINGS.tagline,
+                subTagline: setDb.sub_tagline || INITIAL_SETTINGS.subTagline,
+                description: setDb.description || INITIAL_SETTINGS.description,
+                address: setDb.address || INITIAL_SETTINGS.address,
+                whatsapp: setDb.whatsapp || INITIAL_SETTINGS.whatsapp,
+                email: setDb.email || INITIAL_SETTINGS.email,
+                tiktok: setDb.tiktok || INITIAL_SETTINGS.tiktok,
+                instagram: setDb.instagram || INITIAL_SETTINGS.instagram,
+                facebook: setDb.facebook || INITIAL_SETTINGS.facebook,
+                logoUrl: setDb.logo_url || INITIAL_SETTINGS.logoUrl
+              });
+            }
+          } catch (err) {
+            // Silently handle error
+          } finally {
+            setIsLoading(false);
+          }
+        }
+
+        fetchInitialData();
+      }, []);
+
+      const showToast = (msg) => {
+        setToastMessage(msg);
+        setTimeout(() => setToastMessage(null), 3500);
+      };
+
+      // Handle submit infaq publik dan kirim ke Supabase + otomatis update dana terhimpun
+      const handlePublicInfaqSubmit = async (formData) => {
+        const newTrxId = `TRX-${Math.floor(10000 + Math.random() * 90000)}`;
+        const donorName = formData.isAnon ? "Hamba Allah" : (formData.name || "Hamba Allah");
+        const amountNum = Number(formData.amount);
+        
+        const newTrx = {
+          id: newTrxId,
+          donorName: donorName,
+          amount: amountNum,
+          programTitle: formData.programTitle,
+          paymentMethod: formData.paymentMethod,
+          status: "Terverifikasi",
+          date: new Date().toLocaleString('id-ID'),
+          notes: formData.notes || ""
+        };
+
+        // Update state lokal transaksi
+        setDonations(prev => [newTrx, ...prev]);
+        setInfaqSuccessData({ ...newTrx, actualName: formData.name });
+
+        // Update nominal dana terhimpun di state program lokal
+        setPrograms(prevPrograms => prevPrograms.map(p => {
+          if (p.title === formData.programTitle) {
+            return { ...p, currentAmount: (p.currentAmount || 0) + amountNum };
+          }
+          return p;
+        }));
+
+        if (supabaseClient) {
+          try {
+            // 1. Simpan transaksi donasi ke tabel donations
+            await supabaseClient.from('donations').insert([{
+              id: newTrxId,
+              donor_name: donorName,
+              donor_phone: formData.phone || null,
+              donor_email: formData.email || null,
+              is_anonymous: formData.isAnon,
+              amount: amountNum,
+              program_title: formData.programTitle,
+              payment_method: formData.paymentMethod,
+              status: "Terverifikasi",
+              notes: formData.notes || null
+            }]);
+
+            // 2. Dapatkan dana terkini dari database Supabase dan perbarui
+            const { data: currentProg } = await supabaseClient
+              .from('programs')
+              .select('id, current_amount')
+              .eq('title', formData.programTitle)
+              .maybeSingle();
+
+            if (currentProg) {
+              const updatedAmt = (Number(currentProg.current_amount) || 0) + amountNum;
+              await supabaseClient
+                .from('programs')
+                .update({ current_amount: updatedAmt })
+                .eq('id', currentProg.id);
+            }
+          } catch (err) {
+            console.warn("Gagal update dana ke Supabase:", err);
+          }
+        }
+
+        showToast("Permohonan infaq berhasil dibuat!");
+      };
+
+      return (
+        <div className="min-h-screen bg-white text-slate-800 font-sans antialiased flex flex-col">
+          {toastMessage && (
+            <div className="fixed bottom-6 right-6 z-[9999] bg-[#1F5946] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 text-sm border border-[#B89355]/40 animate-fade-in">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#B89355]"></span>
+              <span className="font-medium">{toastMessage}</span>
+            </div>
+          )}
+
+          <PublicNavbar 
+            mobileMenuOpen={mobileMenuOpen}
+            setMobileMenuOpen={setMobileMenuOpen}
+            setCurrentRoute={setCurrentRoute}
+          />
+
+          <main className="flex-grow bg-white">
+            {currentRoute === 'home' && (
+              <>
+                <HeroSection />
+                <AboutUsSection />
+                <ProgramsSection 
+                  programs={programs}
+                  isLoading={isLoading}
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  onSelectProgram={(prog) => { setSelectedProgram(prog); setCurrentRoute('program-detail'); window.scrollTo({top: 0, behavior: 'smooth'}); }}
+                  onInfaqNow={(prog) => { setSelectedProgram(prog); setCurrentRoute('infaq'); window.scrollTo({top: 0, behavior: 'smooth'}); }}
+                />
+                <GallerySection gallery={gallery} isLoading={isLoading} galleryCategory={galleryCategory} setGalleryCategory={setGalleryCategory} />
+            )}
+
+            {currentRoute === 'program-detail' && selectedProgram && (
+              <ProgramDetailView 
+                program={selectedProgram}
+                onBack={() => { setCurrentRoute('home'); setSelectedProgram(null); }}
+                onInfaqNow={() => { setCurrentRoute('infaq'); window.scrollTo({top: 0, behavior: 'smooth'}); }}
+                recentDonations={donations.filter(d => d.programTitle === selectedProgram.title && d.status === 'Terverifikasi')}
+              />
+            )}
+
+            {currentRoute === 'infaq' && (
+              <InfaqFormView 
+                programs={programs}
+                selectedProgram={selectedProgram}
+                settings={settings}
+                onSubmitInfaq={handlePublicInfaqSubmit}
+                successData={infaqSuccessData}
+                onReset={() => setInfaqSuccessData(null)}
+                onBack={() => { setCurrentRoute('home'); setInfaqSuccessData(null); }}
+                showToast={showToast}
+              />
+            )}
+          </main>
+
+          <PublicFooter settings={settings} />
+        </div>
+      );
+    }
+
+    function PublicNavbar({ mobileMenuOpen, setMobileMenuOpen, setCurrentRoute }) {
+      const [isScrolled, setIsScrolled] = useState(false);
+
+      useEffect(() => {
+        const handleScroll = () => setIsScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      const navLinks = [
+        { label: "Beranda", href: "#beranda" },
+        { label: "Tentang Kami", href: "#tentang" },
+        { label: "Program Infaq", href: "#program" },
+        { label: "Galeri Dokumentasi", href: "#galeri" }
+      ];
+
+      return (
+        <nav className={`sticky top-0 z-50 transition-all duration-300 ${
+          isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm py-3 border-b border-slate-100' : 'bg-white py-4 border-b border-slate-100/70'
+        }`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+            <button 
+              onClick={() => { setCurrentRoute('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="focus:outline-none"
+            >
+              <NurulHayahLogo />
+            </button>
+
+            <div className="hidden lg:flex items-center space-x-7 font-medium text-sm text-slate-700">
+              {navLinks.map((link, idx) => (
+                <a
+                  key={idx}
+                  href={link.href}
+                  onClick={() => setCurrentRoute('home')}
+                  className="hover:text-[#1F5946] transition-colors py-1 relative group font-semibold"
+                >
+                  {link.label}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#B89355] transition-all duration-300 group-hover:w-full"></span>
+                </a>
+              ))}
+            </div>
+
+            <div className="flex lg:hidden items-center space-x-2">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-slate-700 focus:outline-none rounded-lg hover:bg-slate-50"
+                aria-label="Menu"
+              >
+                {mobileMenuOpen ? <Icons.X /> : <Icons.Menu />}
+              </button>
+            </div>
+          </div>
+
+          {mobileMenuOpen && (
+            <div className="lg:hidden bg-white border-b border-slate-200 px-6 py-5 space-y-3 shadow-xl">
+              {navLinks.map((link, idx) => (
+                <a
+                  key={idx}
+                  href={link.href}
+                  onClick={() => { setCurrentRoute('home'); setMobileMenuOpen(false); }}
+                  className="block font-semibold text-slate-700 hover:text-[#1F5946] py-1 text-base border-b border-slate-50"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </nav>
+      );
+    }
+
+    function HeroSection() {
+      const slides = [
+        {
+          title: "Membangun Masa Depan Umat Melalui Infaq & Pendidikan",
+          subtitle: "Lembaga Infaq Nurul Hayah mengelola dan menyalurkan dana infaq secara transparan, amanah, dan profesional demi menghadirkan pendidikan berkualitas serta kesejahteraan bagi santri dan dhuafa.",
+          image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1600&q=80"
+        },
+        {
+          title: "Amanah Bersama, Sejahtera & Berdaya",
+          subtitle: "Menyalurkan kepedulian Anda tepat sasaran kepada para santri, anak yatim, dan keluarga prasejahtera di seluruh penjuru pelosok.",
+          image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1600&q=80"
+        },
+        {
+          title: "Pemberdayaan Santri & Fasilitas Pendidikan Islam",
+          subtitle: "Mari bergotong-royong membangun sarana prasarana belajar yang layak untuk generasi penerus bangsa yang berakhlak mulia.",
+          image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1600&q=80"
+        }
+      ];
+
+      const [currentSlide, setCurrentSlide] = useState(0);
+
+      useEffect(() => {
+        const timer = setInterval(() => {
+          setCurrentSlide((prev) => (prev + 1) % slides.length);
+        }, 6000);
+        return () => clearInterval(timer);
+      }, [slides.length]);
+
+      const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+      const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
+
+      return (
+        <section id="beranda" className="relative bg-slate-900 text-white overflow-hidden">
+          <div className="relative min-h-[520px] sm:min-h-[580px] flex items-center justify-center">
+            {slides.map((slide, idx) => (
+              <div
+                key={idx}
+                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                  idx === currentSlide ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
+                }`}
+              >
+                <div className="absolute inset-0 bg-slate-950/75 z-10"></div>
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover object-center transform scale-105"
+                />
+
+                <div className="absolute inset-0 z-20 flex items-center justify-center">
+                  <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center space-y-6">
+                    <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-md">
+                      {slide.title}
+                    </h1>
+
+                    <p className="text-sm sm:text-lg text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal drop-shadow">
+                      {slide.subtitle}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <button
+              onClick={prevSlide}
+              aria-label="Slide Sebelumnya"
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
+            >
+              <Icons.ChevronLeft />
+            </button>
+            <button
+              onClick={nextSlide}
+              aria-label="Slide Selanjutnya"
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
+            >
+              <Icons.ChevronRight />
+            </button>
+
+            <div className="absolute bottom-6 left-0 right-0 z-30 flex justify-center space-x-2">
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    idx === currentSlide ? 'w-8 bg-[#B89355]' : 'w-2.5 bg-white/40 hover:bg-white/70'
+                  }`}
+                  aria-label={`Ke slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="w-full h-3 bg-gradient-to-r from-[#1F5946] via-[#B89355] to-[#1F5946]"></div>
+        </section>
+      );
+    }
+
+    function AboutUsSection() {
+      return (
+        <section id="tentang" className="py-20 bg-white border-b-8 border-slate-100">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <div className="text-center max-w-2xl mx-auto mb-8">
+              <h2 className="text-3xl sm:text-4xl font-black text-[#1F5946]">
+                Tentang Lembaga Infaq Nurul Hayah
+              </h2>
+            </div>
+
+            <div className="space-y-4 text-slate-700 leading-relaxed text-sm sm:text-base">
+              <p>
+                Lembaga Infaq Nurul Hayah berdiri atas arahan dan bimbingan pengasuh Pondok Pesantren Nurul Hayah, <strong className="text-slate-900">Dr. KH. Ja'far Ath-Thayyar, Lc., M.A.</strong> Kami hadir sebagai penggerak sosial skala nasional yang berfokus pada penghimpunan dan penyaluran infaq untuk pembangunan infrastruktur pendidikan Islam serta pemberdayaan kesejahteraan umat.
+              </p>
+              <p className="italic text-slate-600 bg-emerald-50/60 p-4 rounded-2xl border-l-4 border-[#1F5946]">
+                "Kami percaya bahwa pendidikan adalah kunci utama untuk mencetak generasi muslim yang mandiri, berdaya saing, dan berakhlak mulia."
+              </p>
+            </div>
+
+            <div className="space-y-3 pt-6 border-t border-slate-100">
+              <h3 className="text-xl font-bold text-slate-900">Visi Kami</h3>
+              <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
+                Menjadi Lembaga Infaq terdepan dalam mewujudkan kesejahteraan sosial dan pendidikan yang merata, berkualitas, dan berkelanjutan bagi masyarakat kurang mampu.
+              </p>
+            </div>
+
+            <div className="space-y-4 pt-6 border-t border-slate-100">
+              <h3 className="text-xl font-bold text-slate-900">Misi & Fokus Gerakan</h3>
+              <ul className="space-y-3 text-slate-700 text-sm sm:text-base list-disc list-inside leading-relaxed">
+                <li>
+                  <strong>Akses Pendidikan Layak:</strong> Menjamin anak-anak yatim dan dhuafa mendapatkan fasilitas belajar, buku, dan seragam gratis.
+                </li>
+                <li>
+                  <strong>Pengembangan Fasilitas:</strong> Membangun dan merenovasi sekolah, asrama, serta fasilitas pendukung pembelajaran.
+                </li>
+                <li>
+                  <strong>Inovasi & Keterampilan:</strong> Mengembangkan akses teknologi digital dan pelatihan kerja bagi generasi muda.
+                </li>
+                <li>
+                  <strong>Pengelolaan Akuntabel:</strong> Menjaga kepercayaan donatur melalui tata kelola dana yang transparan dan profesional.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function ProgramsSection({ programs, isLoading, selectedCategory, setSelectedCategory, onSelectProgram, onInfaqNow }) {
+      const categories = ["Semua", "Pendidikan", "Santunan", "Wakaf & Pembangunan", "Paket Sembako", "Ramadhan"];
+
+      const filteredPrograms = useMemo(() => {
+        if (selectedCategory === "Semua") return programs;
+        return programs.filter(p => p.category === selectedCategory);
+      }, [programs, selectedCategory]);
+
+      return (
+        <section id="program" className="py-20 bg-white border-b border-slate-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-black text-slate-900">
+                  Program Lembaga Infaq Nurul Hayah
+                </h2>
+                <p className="text-slate-600 text-sm mt-2 max-w-xl">
+                  Salurkan kebaikan jariyah Anda untuk program-program yang telah terverifikasi tepat sasaran.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2 mt-6 md:mt-0">
+                {categories.map((cat, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition ${
+                      selectedCategory === cat
+                        ? 'bg-[#1F5946] text-white shadow-sm'
+                        : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {isLoading ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="bg-slate-100 h-96 rounded-3xl border border-slate-200"></div>
+                ))}
+              </div>
+            ) : filteredPrograms.length === 0 ? (
+              <div className="text-center py-16 bg-slate-50 rounded-3xl border border-slate-200 max-w-xl mx-auto p-8 space-y-3">
+                <div className="w-12 h-12 bg-emerald-100 text-[#1F5946] rounded-2xl flex items-center justify-center mx-auto">
+                  <Icons.Layers />
+                </div>
+                <h3 className="font-bold text-slate-800 text-base">Belum Ada Program Ditampilkan</h3>
+                <p className="text-slate-500 font-medium text-xs leading-relaxed">
+                  Program infaq akan segera diperbarui secara berkala. Terima kasih atas dukungan dan partisipasi Anda.
+                </p>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredPrograms.map((prog) => {
+                  const percent = prog.targetAmount > 0 ? Math.min(Math.round((prog.currentAmount / prog.targetAmount) * 100), 100) : 0;
+                  return (
+                    <div 
+                      key={prog.id}
+                      className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group"
+                    >
+                      <div className="relative h-52 overflow-hidden bg-slate-100">
+                        <img 
+                          src={prog.imageUrl} 
+                          alt={prog.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800&q=80"; }}
+                        />
+                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-[#1F5946] text-[11px] font-extrabold px-3 py-1 rounded-full shadow-sm border border-slate-100">
+                          {prog.category}
+                        </div>
+                        <div className={`absolute top-4 right-4 text-[11px] font-bold px-2.5 py-1 rounded-full text-white ${
+                          prog.status === 'Aktif' ? 'bg-[#1F5946]' : 'bg-slate-600'
+                        }`}>
+                          {prog.status}
+                        </div>
+                      </div>
+
+                      <div className="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h3 className="font-bold text-lg text-slate-900 line-clamp-2 mb-2 group-hover:text-[#1F5946] transition">
+                            {prog.title}
+                          </h3>
+                          <p className="text-slate-500 text-xs line-clamp-2 mb-6 leading-relaxed">
+                            {prog.description}
+                          </p>
+                        </div>
+
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex justify-between text-xs font-semibold mb-1.5">
+                              <span className="text-[#1F5946] font-bold">Terkumpul: {formatIDR(prog.currentAmount)}</span>
+                              <span className="text-[#B89355] font-extrabold">{percent}%</span>
+                            </div>
+                            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200">
+                              <div 
+                                className="bg-[#1F5946] h-full rounded-full transition-all duration-700" 
+                                style={{ width: `${percent}%` }}
+                              ></div>
+                            </div>
+                            <div className="flex justify-between text-[11px] text-slate-400 mt-1 font-medium">
+                              <span>Target: {formatIDR(prog.targetAmount)}</span>
+                              <span>{prog.beneficiaries} Penerima</span>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                            <button
+                              onClick={() => onSelectProgram(prog)}
+                              className="py-2.5 text-xs font-bold text-[#1F5946] bg-emerald-50 hover:bg-emerald-100 rounded-xl transition text-center"
+                            >
+                              Detail Program
+                            </button>
+                            <button
+                              onClick={() => onInfaqNow(prog)}
+                              className="py-2.5 text-xs font-bold text-white bg-[#1F5946] hover:bg-[#174435] rounded-xl shadow-sm transition text-center"
+                            >
+                              Infaq Sekarang
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    }
+
+    function ProgramDetailView({ program, onBack, onInfaqNow, recentDonations }) {
+      const percent = program.targetAmount > 0 ? Math.min(Math.round((program.currentAmount / program.targetAmount) * 100), 100) : 0;
+
+      return (
+        <div className="max-w-4xl mx-auto px-4 py-12">
+          <button 
+            onClick={onBack}
+            className="inline-flex items-center space-x-2 text-sm font-bold text-[#1F5946] hover:text-[#174435] mb-6 bg-emerald-50 px-4 py-2 rounded-xl transition"
+          >
+            <span>← Kembali ke Semua Program</span>
+          </button>
+
+          <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-200">
+            <div className="relative h-72 sm:h-96 w-full">
+              <img 
+                src={program.imageUrl} 
+                alt={program.title}
+                className="w-full h-full object-cover" 
+                onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800&q=80"; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+              <div className="absolute bottom-6 left-6 right-6 text-white">
+                <span className="bg-[#B89355] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  {program.category}
+                </span>
+                <h1 className="text-2xl sm:text-3xl font-black mt-2 leading-tight">
+                  {program.title}
+                </h1>
+              </div>
+            </div>
+
+            <div className="p-6 sm:p-10 space-y-8">
+              <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex justify-between items-end">
+                  <div>
+                    <div className="text-xs text-slate-500 font-semibold">Dana Terhimpun</div>
+                    <div className="text-2xl font-black text-[#1F5946]">{formatIDR(program.currentAmount)}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-slate-500 font-semibold">Target Kebutuhan</div>
+                    <div className="text-base font-bold text-slate-700">{formatIDR(program.targetAmount)}</div>
+                  </div>
+                </div>
+
+                <div className="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                  <div className="bg-[#1F5946] h-full" style={{ width: `${percent}%` }}></div>
+                </div>
+
+                <div className="flex justify-between text-xs text-slate-500 font-semibold">
+                  <span>{percent}% Tercapai</span>
+                  <span>{program.beneficiaries} Jiwa Penerima Manfaat</span>
+                </div>
+
+                <button
+                  onClick={onInfaqNow}
+                  className="w-full py-4 bg-[#1F5946] hover:bg-[#174435] text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center space-x-2 text-base"
+                >
+                  <span className="text-[#B89355]"><Icons.Heart /></span>
+                  <span>Salurkan Infaq untuk Program Ini</span>
+                </button>
+              </div>
+
+              <div className="space-y-4 text-slate-700 leading-relaxed text-sm sm:text-base">
+                <h2 className="text-xl font-bold text-slate-900 border-b pb-2">Deskripsi & Rencana Penyaluran</h2>
+                <p>{program.fullContent || program.description}</p>
+                <p className="text-slate-600">
+                  Setiap dana yang masuk akan dicatat secara transparan dan disalurkan secara berkala oleh amil Lembaga Infaq Nurul Hayah.
+                </p>
+              </div>
+
+              <div className="pt-6 border-t border-slate-100">
+                <h3 className="font-bold text-slate-900 mb-4 text-base">Donatur Terkini ({recentDonations.length})</h3>
+                {recentDonations.length === 0 ? (
+                  <p className="text-xs text-slate-400 italic">Jadilah donatur pertama untuk program mulia ini.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {recentDonations.slice(0, 5).map((d, i) => (
+                      <div key={i} className="flex justify-between items-center text-xs p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-7 h-7 rounded-full bg-emerald-100 text-[#1F5946] font-bold flex items-center justify-center text-[10px]">
+                            {d.donorName.charAt(0)}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-slate-800">{d.donorName}</div>
+                            <div className="text-[10px] text-slate-400">{d.date}</div>
+                          </div>
+                        </div>
+                        <div className="font-bold text-[#1F5946]">{formatIDR(d.amount)}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function InfaqFormView({ programs, selectedProgram, settings, onSubmitInfaq, successData, onReset, onBack, showToast }) {
+      const [formData, setFormData] = useState({
+        name: '',
+        phone: '',
+        email: '',
+        isAnon: false,
+        amount: '50000',
+        customAmount: '',
+        programTitle: selectedProgram ? selectedProgram.title : (programs[0]?.title || "Infaq Umum"),
+        paymentMethod: "WhatsApp Transfer",
+        notes: ''
+      });
+
+      const presetAmounts = ["10000", "25000", "50000", "100000", "250000", "500000"];
+
+      const handleNominalClick = (val) => {
+        setFormData({ ...formData, amount: val, customAmount: '' });
+      };
+
+      const handleCustomNominal = (e) => {
+        const raw = e.target.value.replace(/\D/g, '');
+        setFormData({ ...formData, amount: raw, customAmount: raw });
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const finalAmount = Number(formData.amount);
+        if (!finalAmount || finalAmount < 5000) {
+          showToast("Nominal infaq minimal Rp 5.000");
+          return;
+        }
+
+        const donorName = formData.isAnon ? "Hamba Allah" : (formData.name || "Hamba Allah");
+        const cleanWA = settings.whatsapp.replace(/\D/g, '');
+
+        let waText = `Assalamualaikum Lembaga Infaq Nurul Hayah,\n\n`;
+        waText += `Saya ingin menyalurkan infaq dengan rincian berikut:\n`;
+        waText += `• Nama: ${donorName}\n`;
+        waText += `• Nominal Infaq: ${formatIDR(finalAmount)}\n`;
+        waText += `• Program: ${formData.programTitle}\n`;
+        if (formData.phone) waText += `• No. WA/HP: ${formData.phone}\n`;
+        if (formData.notes) waText += `• Doa/Niat: ${formData.notes}\n`;
+        waText += `\nMohon informasi Nomor Rekening / QRIS untuk pengiriman infaq. Terima kasih.`;
+
+        const waUrl = `https://wa.me/${cleanWA}?text=${encodeURIComponent(waText)}`;
+
+        onSubmitInfaq(formData);
+        window.open(waUrl, '_blank');
+      };
+
+      if (successData) {
+        return (
+          <div className="max-w-xl mx-auto px-4 py-16">
+            <div className="bg-white rounded-3xl p-8 shadow-2xl border border-slate-200 text-center space-y-6">
+              <div className="w-16 h-16 bg-emerald-50 text-[#1F5946] border border-emerald-200 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                <Icons.CheckCircle />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black text-slate-900">Jazakallahu Khairan</h2>
+                <p className="text-xs text-slate-500 mt-1">ID Transaksi: <span className="font-mono font-bold text-[#1F5946]">{successData.id}</span></p>
+              </div>
+
+              <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 text-left space-y-3 text-xs">
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-slate-500">Program:</span>
+                  <span className="font-bold text-slate-800 text-right max-w-xs">{successData.programTitle}</span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-slate-500">Nominal Infaq:</span>
+                  <span className="font-black text-[#1F5946] text-base">{formatIDR(successData.amount)}</span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-slate-500">Nama Donatur:</span>
+                  <span className="font-semibold text-slate-800">{successData.donorName}</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <a
+                  href={`https://wa.me/${settings.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Assalamualaikum Lembaga Infaq Nurul Hayah,\n\nSaya ingin meminta Nomor Rekening / QRIS untuk transaksi ID: ${successData.id} sebesar ${formatIDR(successData.amount)}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-3.5 bg-[#1F5946] hover:bg-[#174435] text-white rounded-xl font-bold text-sm flex items-center justify-center space-x-2 shadow-md"
+                >
+                  <Icons.WhatsApp />
+                  <span>Buka WhatsApp (Minta Rekening / QRIS)</span>
+                </a>
+                <button
+                  onClick={() => { onReset(); onBack(); }}
+                  className="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm"
+                >
+                  Selesai
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="max-w-2xl mx-auto px-4 py-12">
+          <div className="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-10">
+            <div className="text-center mb-8">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">
+                Form Salurkan Infaq
+              </h1>
+              <p className="text-slate-500 text-xs sm:text-sm mt-1">
+                Isi data di bawah ini, lalu klik tombol untuk langsung terhubung ke WhatsApp kami untuk mendapatkan Nomor Rekening / QRIS.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                  Pilihan Program Kebaikan
+                </label>
+                <select
+                  value={formData.programTitle}
+                  onChange={(e) => setFormData({ ...formData, programTitle: e.target.value })}
+                  className="w-full px-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-[#1F5946] outline-none"
+                >
+                  {programs.length === 0 ? (
+                    <option value="Infaq Umum">Infaq Umum / Operasional</option>
+                  ) : (
+                    programs.map((p) => (
+                      <option key={p.id} value={p.title}>{p.title} ({p.category})</option>
+                    ))
+                  )}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                  Nominal Infaq
+                </label>
+                <div className="grid grid-cols-3 gap-2.5 mb-3">
+                  {presetAmounts.map((val) => (
+                    <button
+                      type="button"
+                      key={val}
+                      onClick={() => handleNominalClick(val)}
+                      className={`py-3 px-2 rounded-2xl text-xs font-bold border transition-all ${
+                        formData.amount === val && !formData.customAmount
+                          ? 'bg-[#1F5946] text-white border-[#1F5946] shadow-sm'
+                          : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50 hover:border-[#1F5946]/40'
+                      }`}
+                    >
+                      {formatIDR(Number(val))}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="relative">
+                  <span className="absolute left-4 top-3.5 text-sm font-bold text-slate-400">Rp</span>
+                  <input
+                    type="text"
+                    placeholder="Nominal lainnya (Contoh: 1.000.000)"
+                    value={formData.customAmount ? formatNumber(formData.customAmount) : ''}
+                    onChange={handleCustomNominal}
+                    className="w-full pl-12 pr-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm font-bold text-[#1F5946] focus:ring-2 focus:ring-[#1F5946] outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4 pt-2 border-t border-slate-100">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    Nama Lengkap
+                  </label>
+                  <input
+                    type="text"
+                    required={!formData.isAnon}
+                    placeholder="Masukkan nama Anda"
+                    value={formData.name}
+                    disabled={formData.isAnon}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm text-slate-800 focus:ring-2 focus:ring-[#1F5946] outline-none disabled:opacity-50"
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="anonCheck"
+                    checked={formData.isAnon}
+                    onChange={(e) => setFormData({ ...formData, isAnon: e.target.checked })}
+                    className="w-4 h-4 text-[#1F5946] rounded focus:ring-[#1F5946]"
+                  />
+                  <label htmlFor="anonCheck" className="text-xs text-slate-600 font-semibold cursor-pointer">
+                    Sembunyikan nama (Infaq atas nama <strong>Hamba Allah</strong>)
+                  </label>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Nomor WhatsApp / HP
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="08xxxxxxxxxx"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full px-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm text-slate-800 focus:ring-2 focus:ring-[#1F5946] outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Email (Opsional)
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="alamat@email.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm text-slate-800 focus:ring-2 focus:ring-[#1F5946] outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Doa / Niat Khusus
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Tuliskan niat atau doa Anda..."
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  className="w-full px-4 py-3 bg-white border border-slate-300 rounded-2xl text-sm text-slate-800 focus:ring-2 focus:ring-[#1F5946] outline-none"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-4 bg-[#1F5946] hover:bg-[#174435] text-white font-bold rounded-2xl shadow-xl transition duration-200 flex items-center justify-center space-x-2 text-base"
+              >
+                <Icons.WhatsApp />
+                <span>Minta No. Rekening / QRIS via WhatsApp ({formatIDR(Number(formData.amount))})</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    function GallerySection({ gallery, galleryCategory, setGalleryCategory }) {
+      const categories = ["Semua", "Pendidikan", "Santunan", "Sosial", "Ramadhan", "Pembangunan"];
+
+      const filteredGallery = useMemo(() => {
+        if (galleryCategory === "Semua") return gallery;
+        return gallery.filter(g => g.category === galleryCategory);
+      }, [gallery, galleryCategory]);
+
+      return (
+        <section id="galeri" className="py-20 bg-white border-b border-slate-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-black text-slate-900">
+                  Galeri Kegiatan Lembaga
+                </h2>
+                <p className="text-slate-600 text-sm mt-2">
+                  Dokumentasi kegiatan dan penyaluran manfaat program Nurul Hayah.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-1.5 mt-6 md:mt-0">
+                {categories.map((c, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setGalleryCategory(c)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition ${
+                      galleryCategory === c
+                        ? 'bg-[#1F5946] text-white shadow-sm'
+                        : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {filteredGallery.length === 0 ? (
+              <div className="text-center py-16 bg-slate-50 rounded-3xl border border-slate-200 max-w-xl mx-auto p-8 space-y-3">
+                <h3 className="font-bold text-slate-800 text-base">Belum Ada Dokumentasi Kegiatan</h3>
+                <p className="text-slate-500 font-medium text-xs leading-relaxed">
+                  Dokumentasi foto kegiatan dan penyaluran infaq akan ditampilkan di sini.
+                </p>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredGallery.map((item) => (
+                  <div 
+                    key={item.id}
+                    className="group relative h-72 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 bg-white border border-slate-200"
+                  >
+                    <img 
+                      src={item.imageUrl} 
+                      alt={item.title} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                      onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=700&q=80"; }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent opacity-90 group-hover:opacity-100 transition"></div>
+                    
+                    <div className="absolute bottom-0 p-6 text-white">
+                      <span className="text-[10px] font-bold bg-[#B89355] text-white px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-2 inline-block">
+                        {item.category}
+                      </span>
+                      <h3 className="font-bold text-base leading-snug">{item.title}</h3>
+                      <p className="text-xs text-slate-200 mt-1 line-clamp-2">{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    }
+
+    function PublicFooter({ settings }) {
+      const cleanWA = settings.whatsapp ? settings.whatsapp.replace(/\D/g, '') : '6282333362299';
+
+      return (
+        <footer className="bg-white border-t border-slate-200 pt-16 pb-8 text-slate-600">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-slate-200">
+              
+              <div className="space-y-4">
+                <NurulHayahLogo />
+                <p className="text-xs sm:text-sm text-slate-500 leading-relaxed pt-2">
+                  Lembaga Infaq Nurul Hayah mengelola dan menyalurkan dana infaq secara transparan, amanah, dan profesional demi menghadirkan pendidikan berkualitas serta kesejahteraan bagi santri dan dhuafa di seluruh Indonesia.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-bold text-slate-900 text-base">Alamat Kantor</h4>
+                <div className="space-y-3 text-xs text-slate-600">
+                  <div className="flex items-start space-x-3">
+                    <span className="text-[#B89355] mt-0.5 flex-shrink-0"><Icons.MapPin /></span>
+                    <span className="leading-relaxed">{settings.address}</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-[#B89355] flex-shrink-0"><Icons.Mail /></span>
+                    <a href={`mailto:${settings.email}`} className="hover:text-[#1F5946] hover:underline truncate font-medium">
+                      {settings.email}
+                    </a>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-[#B89355] flex-shrink-0"><Icons.Phone /></span>
+                    <a href={`https://wa.me/${cleanWA}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#1F5946] hover:underline font-bold text-slate-800">
+                      {settings.whatsapp}
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-bold text-slate-900 text-base">Navigasi Halaman</h4>
+                <ul className="space-y-2.5 text-xs text-slate-600 font-medium">
+                  <li><a href="#beranda" className="hover:text-[#1F5946] transition">Beranda</a></li>
+                  <li><a href="#tentang" className="hover:text-[#1F5946] transition">Tentang Kami</a></li>
+                  <li><a href="#program" className="hover:text-[#1F5946] transition">Program Infaq</a></li>
+                  <li><a href="#galeri" className="hover:text-[#1F5946] transition">Galeri Kegiatan</a></li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-bold text-slate-900 text-base">Media Sosial</h4>
+                <div className="grid grid-cols-3 gap-3 w-max">
+                  <a
+                    href="https://www.instagram.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Instagram Lembaga Infaq Nurul Hayah"
+                    className="w-12 h-12 rounded-xl bg-[#E4405F] hover:bg-[#d62e4c] text-white flex items-center justify-center shadow-sm hover:scale-105 transition-all duration-200"
+                  >
+                    <Icons.Instagram />
+                  </a>
+
+                  <a
+                    href={`https://www.tiktok.com/search?q=${encodeURIComponent(settings.tiktok)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="TikTok Lembaga Infaq Nurul Hayah"
+                    className="w-12 h-12 rounded-xl bg-[#010101] hover:bg-black text-white flex items-center justify-center shadow-sm hover:scale-105 transition-all duration-200"
+                  >
+                    <Icons.TikTok />
+                  </a>
+
+                  <a
+                    href="https://www.youtube.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="YouTube Lembaga Infaq Nurul Hayah"
+                    className="w-12 h-12 rounded-xl bg-[#FF0000] hover:bg-[#e60000] text-white flex items-center justify-center shadow-sm hover:scale-105 transition-all duration-200"
+                  >
+                    <Icons.YouTube />
+                  </a>
+
+                  <a
+                    href="https://www.facebook.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Facebook Lembaga Infaq Nurul Hayah"
+                    className="w-12 h-12 rounded-xl bg-[#1877F2] hover:bg-[#0d65d9] text-white flex items-center justify-center shadow-sm hover:scale-105 transition-all duration-200"
+                  >
+                    <Icons.Facebook />
+                  </a>
+
+                  <a
+                    href={`https://wa.me/${cleanWA}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="WhatsApp Layanan Nurul Hayah"
+                    className="w-12 h-12 rounded-xl bg-[#25D366] hover:bg-[#1fbe5a] text-white flex items-center justify-center shadow-sm hover:scale-105 transition-all duration-200"
+                  >
+                    <Icons.WhatsApp />
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            <div className="pt-8 text-center text-xs text-slate-500 font-medium space-y-1">
+              <p>Copyright © 2026 Lembaga Infaq Nurul Hayah. All Rights Reserved.</p>
+              <p className="text-[11px] text-slate-400">Amanah Bersama, Sejahtera dan Berdaya</p>
+            </div>
+          </div>
+        </footer>
+      );
+    }
+
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<App />);
+  </script>
+</body>
+</html>
