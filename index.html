@@ -87,7 +87,7 @@
       logoUrl: "https://www.upload.ee/image/19709356/Primary_Logo_1.jpg.jpeg"
     };
 
-    // Data murni kosong di awal - hanya menampilkan data asli dari Supabase / Admin Panel
+    // Data awal kosongan
     const INITIAL_PROGRAMS = [];
     const INITIAL_GALLERY = [];
     const INITIAL_DONATIONS = [];
@@ -164,7 +164,7 @@
       const [galleryCategory, setGalleryCategory] = useState("Semua");
       const [toastMessage, setToastMessage] = useState(null);
 
-      // Effect utama fetching data otomatis saat load
+      // Fetching data dari Supabase
       useEffect(() => {
         async function fetchInitialData() {
           if (!supabaseClient) {
@@ -172,14 +172,14 @@
             return;
           }
           try {
-            // 1. Fetch Data Program Infaq
+            // 1. Fetch Programs
             const { data: progData, error: progErr } = await supabaseClient
               .from('programs')
               .select('*')
               .order('created_at', { ascending: false });
 
             if (!progErr && progData) {
-              const formattedPrograms = progData.map(p => ({
+              setPrograms(progData.map(p => ({
                 id: p.id,
                 title: p.title,
                 category: p.category || 'Pendidikan',
@@ -190,11 +190,10 @@
                 beneficiaries: Number(p.beneficiaries || 0),
                 imageUrl: p.image_url || '',
                 status: p.status || 'Aktif'
-              }));
-              setPrograms(formattedPrograms);
+              })));
             }
 
-            // 2. Fetch Data Transaksi Infaq
+            // 2. Fetch Donations
             const { data: donData, error: donErr } = await supabaseClient
               .from('donations')
               .select('*')
@@ -213,7 +212,7 @@
               })));
             }
 
-            // 3. Fetch Data Galeri Kegiatan
+            // 3. Fetch Gallery
             const { data: galData, error: galErr } = await supabaseClient
               .from('gallery')
               .select('*')
@@ -229,7 +228,7 @@
               })));
             }
 
-            // 4. Fetch Pengaturan Organisasi
+            // 4. Fetch Settings
             const { data: setDb, error: setErr } = await supabaseClient
               .from('settings')
               .select('*')
@@ -251,7 +250,7 @@
               });
             }
           } catch (err) {
-            // Silently handle error
+            console.warn("Fetch error:", err);
           } finally {
             setIsLoading(false);
           }
@@ -265,7 +264,6 @@
         setTimeout(() => setToastMessage(null), 3500);
       };
 
-      // Handle submit infaq publik dan kirim ke Supabase + otomatis update dana terhimpun
       const handlePublicInfaqSubmit = async (formData) => {
         const newTrxId = `TRX-${Math.floor(10000 + Math.random() * 90000)}`;
         const donorName = formData.isAnon ? "Hamba Allah" : (formData.name || "Hamba Allah");
@@ -282,11 +280,9 @@
           notes: formData.notes || ""
         };
 
-        // Update state lokal transaksi
         setDonations(prev => [newTrx, ...prev]);
         setInfaqSuccessData({ ...newTrx, actualName: formData.name });
 
-        // Update nominal dana terhimpun di state program lokal
         setPrograms(prevPrograms => prevPrograms.map(p => {
           if (p.title === formData.programTitle) {
             return { ...p, currentAmount: (p.currentAmount || 0) + amountNum };
@@ -296,7 +292,6 @@
 
         if (supabaseClient) {
           try {
-            // 1. Simpan transaksi donasi ke tabel donations
             await supabaseClient.from('donations').insert([{
               id: newTrxId,
               donor_name: donorName,
@@ -310,7 +305,6 @@
               notes: formData.notes || null
             }]);
 
-            // 2. Dapatkan dana terkini dari database Supabase dan perbarui
             const { data: currentProg } = await supabaseClient
               .from('programs')
               .select('id, current_amount')
@@ -325,7 +319,7 @@
                 .eq('id', currentProg.id);
             }
           } catch (err) {
-            console.warn("Gagal update dana ke Supabase:", err);
+            console.warn("Error updating Supabase:", err);
           }
         }
 
@@ -361,6 +355,7 @@
                   onInfaqNow={(prog) => { setSelectedProgram(prog); setCurrentRoute('infaq'); window.scrollTo({top: 0, behavior: 'smooth'}); }}
                 />
                 <GallerySection gallery={gallery} isLoading={isLoading} galleryCategory={galleryCategory} setGalleryCategory={setGalleryCategory} />
+              </>
             )}
 
             {currentRoute === 'program-detail' && selectedProgram && (
