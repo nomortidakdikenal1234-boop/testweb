@@ -489,121 +489,84 @@
       const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
 
       return (
-        <div className="relative bg-slate-50 pb-8">
-          <section id="beranda" className="relative bg-slate-900 text-white overflow-hidden">
-            <div className="relative min-h-[500px] sm:min-h-[560px] flex items-center justify-center">
-              {slides.map((slide, idx) => (
-                <div
-                  key={idx}
-                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                    idx === currentSlide ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
-                  }`}
-                >
-                  <div className="absolute inset-0 bg-slate-950/75 z-10"></div>
-                  <img
-                    src={slide.image}
-                    alt={slide.title}
-                    className="w-full h-full object-cover object-center transform scale-105"
-                  />
+        <section id="beranda" className="relative bg-slate-900 text-white overflow-hidden">
+          <div className="relative min-h-[500px] sm:min-h-[560px] flex items-center justify-center overflow-hidden">
+            {slides.map((slide, idx) => (
+              <div
+                key={idx}
+                className={`absolute inset-0 overflow-hidden transition-opacity duration-1000 ease-in-out ${
+                  idx === currentSlide ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
+                }`}
+              >
+                <div className="absolute inset-0 bg-slate-950/75 z-10 pointer-events-none"></div>
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  className="w-full h-full object-cover object-center transform scale-105"
+                />
 
-                  <div className="absolute inset-0 z-20 flex items-center justify-center">
-                    <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center space-y-6 pb-10 sm:pb-12">
-                      <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-md">
-                        {slide.title}
-                      </h1>
+                <div className="absolute inset-0 z-20 flex items-center justify-center">
+                  <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center space-y-6 pb-10 sm:pb-12">
+                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-md">
+                      {slide.title}
+                    </h1>
 
-                      <p className="text-xs sm:text-base text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal drop-shadow">
-                        {slide.subtitle}
-                      </p>
+                    <p className="text-xs sm:text-base text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal drop-shadow">
+                      {slide.subtitle}
+                    </p>
 
-                      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                        <a
-                          href="#program"
-                          className="w-full sm:w-auto px-6 py-3 bg-[#1F5946] hover:bg-[#174435] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg transition flex items-center justify-center space-x-2 border border-[#B89355]/40"
-                        >
-                          <Icons.Heart />
-                          <span>Salurkan Infaq Sekarang</span>
-                        </a>
-                        <a
-                          href="#tentang"
-                          className="w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm rounded-xl backdrop-blur-md border border-white/20 transition flex items-center justify-center space-x-1"
-                        >
-                          <span>Pelajari Profil Kami</span>
-                          <Icons.ArrowRight />
-                        </a>
-                      </div>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                      <a
+                        href="#program"
+                        className="w-full sm:w-auto px-6 py-3 bg-[#1F5946] hover:bg-[#174435] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg transition flex items-center justify-center space-x-2 border border-[#B89355]/40"
+                      >
+                        <Icons.Heart />
+                        <span>Salurkan Infaq Sekarang</span>
+                      </a>
+                      <a
+                        href="#tentang"
+                        className="w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm rounded-xl backdrop-blur-md border border-white/20 transition flex items-center justify-center space-x-1"
+                      >
+                        <span>Pelajari Profil Kami</span>
+                        <Icons.ArrowRight />
+                      </a>
                     </div>
                   </div>
                 </div>
+              </div>
+            ))}
+
+            <button
+              onClick={prevSlide}
+              aria-label="Slide Sebelumnya"
+              className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
+            >
+              <Icons.ChevronLeft />
+            </button>
+            <button
+              onClick={nextSlide}
+              aria-label="Slide Selanjutnya"
+              className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
+            >
+              <Icons.ChevronRight />
+            </button>
+
+            <div className="absolute bottom-6 left-0 right-0 z-30 flex justify-center space-x-2">
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    idx === currentSlide ? 'w-8 bg-[#B89355]' : 'w-2.5 bg-white/40 hover:bg-white/70'
+                  }`}
+                  aria-label={`Ke slide ${idx + 1}`}
+                />
               ))}
-
-              <button
-                onClick={prevSlide}
-                aria-label="Slide Sebelumnya"
-                className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
-              >
-                <Icons.ChevronLeft />
-              </button>
-              <button
-                onClick={nextSlide}
-                aria-label="Slide Selanjutnya"
-                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
-              >
-                <Icons.ChevronRight />
-              </button>
-
-              <div className="absolute bottom-8 left-0 right-0 z-30 flex justify-center space-x-2">
-                {slides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentSlide(idx)}
-                    className={`h-2.5 rounded-full transition-all duration-300 ${
-                      idx === currentSlide ? 'w-8 bg-[#B89355]' : 'w-2.5 bg-white/40 hover:bg-white/70'
-                    }`}
-                    aria-label={`Ke slide ${idx + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className="w-full h-3 bg-gradient-to-r from-[#1F5946] via-[#B89355] to-[#1F5946]"></div>
-          </section>
-
-          {/* Floating Feature Highlight Bar to eliminate empty gap */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-30">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-5 sm:p-6 rounded-3xl shadow-xl border border-slate-100">
-              <div className="flex items-center space-x-4 p-3.5 rounded-2xl bg-emerald-50/60 border border-emerald-100/80">
-                <div className="w-11 h-11 rounded-2xl bg-[#1F5946] text-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <Icons.CheckCircle />
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-900 text-sm">Transparan & Amanah</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed mt-0.5">Pengelolaan dana yang akuntabel & tersalurkan tepat sasaran.</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4 p-3.5 rounded-2xl bg-amber-50/60 border border-amber-100/80">
-                <div className="w-11 h-11 rounded-2xl bg-[#B89355] text-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <Icons.Users />
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-900 text-sm">Pendidikan Santri</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed mt-0.5">Mendukung beasiswa & sarana santri tahfizh dhuafa.</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4 p-3.5 rounded-2xl bg-emerald-50/60 border border-emerald-100/80">
-                <div className="w-11 h-11 rounded-2xl bg-[#1F5946] text-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <Icons.Heart />
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-900 text-sm">Pemberdayaan Umat</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed mt-0.5">Menyediakan paket sembako & santunan warga prasejahtera.</p>
-                </div>
-              </div>
             </div>
           </div>
-        </div>
+
+          <div className="w-full h-2 bg-gradient-to-r from-[#1F5946] via-[#B89355] to-[#1F5946]"></div>
+        </section>
       );
     }
 
