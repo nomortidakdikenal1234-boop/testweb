@@ -489,76 +489,133 @@
       const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
 
       return (
-        <section id="beranda" className="relative bg-slate-900 text-white overflow-hidden">
-          <div className="relative min-h-[520px] sm:min-h-[580px] flex items-center justify-center">
-            {slides.map((slide, idx) => (
-              <div
-                key={idx}
-                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                  idx === currentSlide ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
-                }`}
-              >
-                <div className="absolute inset-0 bg-slate-950/75 z-10"></div>
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="w-full h-full object-cover object-center transform scale-105"
-                />
+        <div className="relative bg-slate-50 pb-8">
+          <section id="beranda" className="relative bg-slate-900 text-white overflow-hidden">
+            <div className="relative min-h-[500px] sm:min-h-[560px] flex items-center justify-center">
+              {slides.map((slide, idx) => (
+                <div
+                  key={idx}
+                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                    idx === currentSlide ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
+                  }`}
+                >
+                  <div className="absolute inset-0 bg-slate-950/75 z-10"></div>
+                  <img
+                    src={slide.image}
+                    alt={slide.title}
+                    className="w-full h-full object-cover object-center transform scale-105"
+                  />
 
-                <div className="absolute inset-0 z-20 flex items-center justify-center">
-                  <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center space-y-6">
-                    <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-md">
-                      {slide.title}
-                    </h1>
+                  <div className="absolute inset-0 z-20 flex items-center justify-center">
+                    <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center space-y-6 pb-10 sm:pb-12">
+                      <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-md">
+                        {slide.title}
+                      </h1>
 
-                    <p className="text-sm sm:text-lg text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal drop-shadow">
-                      {slide.subtitle}
-                    </p>
+                      <p className="text-xs sm:text-base text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal drop-shadow">
+                        {slide.subtitle}
+                      </p>
+
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                        <a
+                          href="#program"
+                          className="w-full sm:w-auto px-6 py-3 bg-[#1F5946] hover:bg-[#174435] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg transition flex items-center justify-center space-x-2 border border-[#B89355]/40"
+                        >
+                          <Icons.Heart />
+                          <span>Salurkan Infaq Sekarang</span>
+                        </a>
+                        <a
+                          href="#tentang"
+                          className="w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm rounded-xl backdrop-blur-md border border-white/20 transition flex items-center justify-center space-x-1"
+                        >
+                          <span>Pelajari Profil Kami</span>
+                          <Icons.ArrowRight />
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-
-            <button
-              onClick={prevSlide}
-              aria-label="Slide Sebelumnya"
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
-            >
-              <Icons.ChevronLeft />
-            </button>
-            <button
-              onClick={nextSlide}
-              aria-label="Slide Selanjutnya"
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
-            >
-              <Icons.ChevronRight />
-            </button>
-
-            <div className="absolute bottom-6 left-0 right-0 z-30 flex justify-center space-x-2">
-              {slides.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentSlide(idx)}
-                  className={`h-2.5 rounded-full transition-all duration-300 ${
-                    idx === currentSlide ? 'w-8 bg-[#B89355]' : 'w-2.5 bg-white/40 hover:bg-white/70'
-                  }`}
-                  aria-label={`Ke slide ${idx + 1}`}
-                />
               ))}
+
+              <button
+                onClick={prevSlide}
+                aria-label="Slide Sebelumnya"
+                className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
+              >
+                <Icons.ChevronLeft />
+              </button>
+              <button
+                onClick={nextSlide}
+                aria-label="Slide Selanjutnya"
+                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
+              >
+                <Icons.ChevronRight />
+              </button>
+
+              <div className="absolute bottom-8 left-0 right-0 z-30 flex justify-center space-x-2">
+                {slides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentSlide(idx)}
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
+                      idx === currentSlide ? 'w-8 bg-[#B89355]' : 'w-2.5 bg-white/40 hover:bg-white/70'
+                    }`}
+                    aria-label={`Ke slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="w-full h-3 bg-gradient-to-r from-[#1F5946] via-[#B89355] to-[#1F5946]"></div>
+          </section>
+
+          {/* Floating Feature Highlight Bar to eliminate empty gap */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-30">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-5 sm:p-6 rounded-3xl shadow-xl border border-slate-100">
+              <div className="flex items-center space-x-4 p-3.5 rounded-2xl bg-emerald-50/60 border border-emerald-100/80">
+                <div className="w-11 h-11 rounded-2xl bg-[#1F5946] text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <Icons.CheckCircle />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 text-sm">Transparan & Amanah</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed mt-0.5">Pengelolaan dana yang akuntabel & tersalurkan tepat sasaran.</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-4 p-3.5 rounded-2xl bg-amber-50/60 border border-amber-100/80">
+                <div className="w-11 h-11 rounded-2xl bg-[#B89355] text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <Icons.Users />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 text-sm">Pendidikan Santri</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed mt-0.5">Mendukung beasiswa & sarana santri tahfizh dhuafa.</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-4 p-3.5 rounded-2xl bg-emerald-50/60 border border-emerald-100/80">
+                <div className="w-11 h-11 rounded-2xl bg-[#1F5946] text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <Icons.Heart />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 text-sm">Pemberdayaan Umat</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed mt-0.5">Menyediakan paket sembako & santunan warga prasejahtera.</p>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className="w-full h-3 bg-gradient-to-r from-[#1F5946] via-[#B89355] to-[#1F5946]"></div>
-        </section>
+        </div>
       );
     }
 
     function AboutUsSection() {
       return (
-        <section id="tentang" className="py-20 bg-white border-b-8 border-slate-100">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="text-center max-w-2xl mx-auto mb-8">
-              <h2 className="text-3xl sm:text-4xl font-black text-[#1F5946]">
+        <section id="tentang" className="py-16 sm:py-20 bg-white border-b border-slate-100">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            <div className="text-center max-w-2xl mx-auto">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#1F5946] bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-100">
+                PROFIL LEMBAGA
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-black text-[#1F5946] mt-3">
                 Tentang Lembaga Infaq Nurul Hayah
               </h2>
             </div>
@@ -567,34 +624,31 @@
               <p>
                 Lembaga Infaq Nurul Hayah berdiri atas arahan dan bimbingan pengasuh Pondok Pesantren Nurul Hayah, <strong className="text-slate-900">Dr. KH. Ja'far Ath-Thayyar, Lc., M.A.</strong> Kami hadir sebagai penggerak sosial skala nasional yang berfokus pada penghimpunan dan penyaluran infaq untuk pembangunan infrastruktur pendidikan Islam serta pemberdayaan kesejahteraan umat.
               </p>
-              <p className="italic text-slate-600 bg-emerald-50/60 p-4 rounded-2xl border-l-4 border-[#1F5946]">
+              <p className="italic text-slate-600 bg-emerald-50/60 p-5 rounded-2xl border-l-4 border-[#1F5946] text-sm sm:text-base">
                 "Kami percaya bahwa pendidikan adalah kunci utama untuk mencetak generasi muslim yang mandiri, berdaya saing, dan berakhlak mulia."
               </p>
             </div>
 
-            <div className="space-y-3 pt-6 border-t border-slate-100">
-              <h3 className="text-xl font-bold text-slate-900">Visi Kami</h3>
-              <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
-                Menjadi Lembaga Infaq terdepan dalam mewujudkan kesejahteraan sosial dan pendidikan yang merata, berkualitas, dan berkelanjutan bagi masyarakat kurang mampu.
-              </p>
-            </div>
+            <div className="grid sm:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+              <div className="space-y-2.5 p-5 bg-slate-50/80 rounded-2xl border border-slate-100">
+                <h3 className="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                  <span className="w-2 h-2 rounded-full bg-[#1F5946]"></span>
+                  <span>Visi Utama</span>
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                  Menjadi Lembaga Infaq terdepan dalam mewujudkan kesejahteraan sosial dan pendidikan yang merata, berkualitas, dan berkelanjutan bagi masyarakat kurang mampu.
+                </p>
+              </div>
 
-            <div className="space-y-4 pt-6 border-t border-slate-100">
-              <h3 className="text-xl font-bold text-slate-900">Misi & Fokus Gerakan</h3>
-              <ul className="space-y-3 text-slate-700 text-sm sm:text-base list-disc list-inside leading-relaxed">
-                <li>
-                  <strong>Akses Pendidikan Layak:</strong> Menjamin anak-anak yatim dan dhuafa mendapatkan fasilitas belajar, buku, dan seragam gratis.
-                </li>
-                <li>
-                  <strong>Pengembangan Fasilitas:</strong> Membangun dan merenovasi sekolah, asrama, serta fasilitas pendukung pembelajaran.
-                </li>
-                <li>
-                  <strong>Inovasi & Keterampilan:</strong> Mengembangkan akses teknologi digital dan pelatihan kerja bagi generasi muda.
-                </li>
-                <li>
-                  <strong>Pengelolaan Akuntabel:</strong> Menjaga kepercayaan donatur melalui tata kelola dana yang transparan dan profesional.
-                </li>
-              </ul>
+              <div className="space-y-2.5 p-5 bg-slate-50/80 rounded-2xl border border-slate-100">
+                <h3 className="text-lg font-bold text-slate-900 flex items-center space-x-2">
+                  <span className="w-2 h-2 rounded-full bg-[#B89355]"></span>
+                  <span>Misi Gerakan</span>
+                </h3>
+                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                  Menjamin fasilitas pendidikan gratis untuk santri yatim & dhuafa, pembangunan sarana ibadah, serta pengelolaan dana infaq secara amanah dan akuntabel.
+                </p>
+              </div>
             </div>
           </div>
         </section>
