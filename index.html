@@ -58,7 +58,6 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    // Konfigurasi Supabase Resmi (Project Ref: dxtuadkxzzcwyhwnatdt)
     const SUPABASE_URL = "https://dxtuadkxzzcwyhwnatdt.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4dHVhZGt4enpjd3lod25hdGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzNTA0ODMsImV4cCI6MjEwMzkyNjQ4M30.XNxdbrFNcjDht97OAR3Mj4q2_AACjTvbHDCyIW8a7_0";
     
@@ -87,7 +86,54 @@
       logoUrl: "https://www.upload.ee/image/19709356/Primary_Logo_1.jpg.jpeg"
     };
 
-    // Data awal kosongan
+    const DEFAULT_HERO_SLIDES = [
+      {
+        id: "slide-1",
+        bgImage: "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1600&q=80",
+        overlayOpacity: 0.55,
+        title: "Membangun Masa Depan Umat Melalui Infaq & Pendidikan",
+        titlePos: { x: 50, y: 38 },
+        titleSize: 28,
+        titleColor: "#ffffff",
+        titleAlign: "center",
+        subtitle: "Lembaga Infaq Nurul Hayah mengelola dan menyalurkan dana infaq secara transparan, amanah, dan profesional demi menghadirkan pendidikan berkualitas serta kesejahteraan bagi santri dan dhuafa.",
+        subtitlePos: { x: 50, y: 62 },
+        subtitleSize: 13,
+        subtitleColor: "#f1f5f9",
+        subtitleAlign: "center"
+      },
+      {
+        id: "slide-2",
+        bgImage: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1600&q=80",
+        overlayOpacity: 0.55,
+        title: "Amanah Bersama, Sejahtera & Berdaya",
+        titlePos: { x: 50, y: 38 },
+        titleSize: 28,
+        titleColor: "#ffffff",
+        titleAlign: "center",
+        subtitle: "Menyalurkan kepedulian Anda tepat sasaran kepada para santri, anak yatim, dan keluarga prasejahtera di seluruh penjuru pelosok.",
+        subtitlePos: { x: 50, y: 62 },
+        subtitleSize: 13,
+        subtitleColor: "#f1f5f9",
+        subtitleAlign: "center"
+      },
+      {
+        id: "slide-3",
+        bgImage: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1600&q=80",
+        overlayOpacity: 0.55,
+        title: "Pemberdayaan Santri & Fasilitas Pendidikan Islam",
+        titlePos: { x: 50, y: 38 },
+        titleSize: 28,
+        titleColor: "#ffffff",
+        titleAlign: "center",
+        subtitle: "Mari bergotong-royong membangun sarana prasarana belajar yang layak untuk generasi penerus bangsa yang berakhlak mulia.",
+        subtitlePos: { x: 50, y: 62 },
+        subtitleSize: 13,
+        subtitleColor: "#f1f5f9",
+        subtitleAlign: "center"
+      }
+    ];
+
     const INITIAL_PROGRAMS = [];
     const INITIAL_GALLERY = [];
     const INITIAL_DONATIONS = [];
@@ -150,6 +196,7 @@
 
     function App() {
       const [settings, setSettings] = useState(INITIAL_SETTINGS);
+      const [heroSlides, setHeroSlides] = useState(DEFAULT_HERO_SLIDES);
       const [programs, setPrograms] = useState(INITIAL_PROGRAMS);
       const [donations, setDonations] = useState(INITIAL_DONATIONS);
       const [gallery, setGallery] = useState(INITIAL_GALLERY);
@@ -164,7 +211,6 @@
       const [galleryCategory, setGalleryCategory] = useState("Semua");
       const [toastMessage, setToastMessage] = useState(null);
 
-      // Fetching data dari Supabase
       useEffect(() => {
         async function fetchInitialData() {
           if (!supabaseClient) {
@@ -172,7 +218,31 @@
             return;
           }
           try {
-            // 1. Fetch Programs
+            // 1. Fetch Hero Slides (Sinkronisasi dengan Admin Panel)
+            const { data: sliData, error: sliErr } = await supabaseClient
+              .from('hero_slides')
+              .select('*')
+              .order('id', { ascending: true });
+
+            if (!sliErr && sliData && sliData.length > 0) {
+              setHeroSlides(sliData.map(s => ({
+                id: String(s.id),
+                bgImage: s.bg_image || s.bg_url || 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1600&q=80',
+                overlayOpacity: Number(s.overlay_opacity ?? 0.55),
+                title: s.title || '',
+                titlePos: { x: Number(s.title_pos_x ?? 50), y: Number(s.title_pos_y ?? 38) },
+                titleSize: Number(s.title_size ?? 28),
+                titleColor: s.title_color || '#ffffff',
+                titleAlign: s.title_align || 'center',
+                subtitle: s.subtitle || '',
+                subtitlePos: { x: Number(s.subtitle_pos_x ?? 50), y: Number(s.subtitle_pos_y ?? 62) },
+                subtitleSize: Number(s.subtitle_size ?? 13),
+                subtitleColor: s.subtitle_color || '#f1f5f9',
+                subtitleAlign: s.subtitle_align || 'center'
+              })));
+            }
+
+            // 2. Fetch Programs
             const { data: progData, error: progErr } = await supabaseClient
               .from('programs')
               .select('*')
@@ -193,7 +263,7 @@
               })));
             }
 
-            // 2. Fetch Donations
+            // 3. Fetch Donations
             const { data: donData, error: donErr } = await supabaseClient
               .from('donations')
               .select('*')
@@ -212,7 +282,7 @@
               })));
             }
 
-            // 3. Fetch Gallery
+            // 4. Fetch Gallery
             const { data: galData, error: galErr } = await supabaseClient
               .from('gallery')
               .select('*')
@@ -228,7 +298,7 @@
               })));
             }
 
-            // 4. Fetch Settings
+            // 5. Fetch Settings
             const { data: setDb, error: setErr } = await supabaseClient
               .from('settings')
               .select('*')
@@ -344,7 +414,7 @@
           <main className="flex-grow bg-white">
             {currentRoute === 'home' && (
               <>
-                <HeroSection />
+                <HeroSection slides={heroSlides} />
                 <AboutUsSection />
                 <ProgramsSection 
                   programs={programs}
@@ -457,95 +527,135 @@
       );
     }
 
-    function HeroSection() {
-      const slides = [
-        {
-          title: "Membangun Masa Depan Umat Melalui Infaq & Pendidikan",
-          subtitle: "Lembaga Infaq Nurul Hayah mengelola dan menyalurkan dana infaq secara transparan, amanah, dan profesional demi menghadirkan pendidikan berkualitas serta kesejahteraan bagi santri dan dhuafa.",
-          image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1600&q=80"
-        },
-        {
-          title: "Amanah Bersama, Sejahtera & Berdaya",
-          subtitle: "Menyalurkan kepedulian Anda tepat sasaran kepada para santri, anak yatim, dan keluarga prasejahtera di seluruh penjuru pelosok.",
-          image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1600&q=80"
-        },
-        {
-          title: "Pemberdayaan Santri & Fasilitas Pendidikan Islam",
-          subtitle: "Mari bergotong-royong membangun sarana prasarana belajar yang layak untuk generasi penerus bangsa yang berakhlak mulia.",
-          image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1600&q=80"
-        }
-      ];
-
+    function HeroSection({ slides }) {
       const [currentSlide, setCurrentSlide] = useState(0);
 
       useEffect(() => {
+        if (!slides || slides.length === 0) return;
         const timer = setInterval(() => {
           setCurrentSlide((prev) => (prev + 1) % slides.length);
         }, 6000);
         return () => clearInterval(timer);
-      }, [slides.length]);
+      }, [slides?.length]);
 
+      if (!slides || slides.length === 0) return null;
+
+      const activeSlideIdx = Math.min(currentSlide, slides.length - 1);
       const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
       const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
 
       return (
         <section id="beranda" className="relative bg-slate-950 text-white overflow-hidden">
-          <div className="relative min-h-[460px] sm:min-h-[520px] flex items-center justify-center overflow-hidden bg-slate-950">
-            {slides.map((slide, idx) => (
-              <div
-                key={idx}
-                className={`absolute inset-0 overflow-hidden transition-opacity duration-1000 ease-in-out ${
-                  idx === currentSlide ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
-                }`}
-              >
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="w-full h-full object-cover object-center transform scale-105"
-                />
-                <div className="absolute -inset-2 bg-slate-950/80 z-10 pointer-events-none"></div>
+          <div className="relative min-h-[480px] sm:min-h-[560px] flex items-center justify-center overflow-hidden bg-slate-950">
+            {slides.map((slide, idx) => {
+              const isActive = idx === activeSlideIdx;
+              const bgImg = slide.bgImage || slide.image || "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1600&q=80";
+              const opacity = slide.overlayOpacity ?? 0.55;
 
-                <div className="absolute inset-0 z-20 flex items-center justify-center">
-                  <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center space-y-4 pb-6">
-                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight text-white drop-shadow-md">
-                      {slide.title}
-                    </h1>
+              return (
+                <div
+                  key={slide.id || idx}
+                  className={`absolute inset-0 overflow-hidden transition-opacity duration-1000 ease-in-out ${
+                    isActive ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
+                  }`}
+                >
+                  {/* Slide Background Image */}
+                  <img
+                    src={bgImg}
+                    alt={slide.title || "Hero Slide"}
+                    className="w-full h-full object-cover object-center transform scale-105"
+                    onError={(e) => {
+                      e.target.src = "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1600&q=80";
+                    }}
+                  />
+                  
+                  {/* Overlay Opacity */}
+                  <div 
+                    className="absolute inset-0 bg-black z-10 pointer-events-none transition-opacity"
+                    style={{ opacity: opacity }}
+                  ></div>
 
-                    <p className="text-xs sm:text-base text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal drop-shadow">
-                      {slide.subtitle}
-                    </p>
+                  {/* Absolute Positioning for Corel-Style Layout */}
+                  <div className="absolute inset-0 z-20 pointer-events-none">
+                    {/* Judul Slide */}
+                    {slide.title && (
+                      <div
+                        className="absolute transform -translate-x-1/2 -translate-y-1/2 p-2 sm:p-3 w-11/12 max-w-4xl"
+                        style={{
+                          left: `${slide.titlePos?.x ?? 50}%`,
+                          top: `${slide.titlePos?.y ?? 38}%`,
+                          textAlign: slide.titleAlign || 'center'
+                        }}
+                      >
+                        <h1
+                          className="font-black leading-tight drop-shadow-lg"
+                          style={{
+                            fontSize: `${slide.titleSize ? Math.max(18, slide.titleSize * 1.15) : 32}px`,
+                            color: slide.titleColor || '#ffffff'
+                          }}
+                        >
+                          {slide.title}
+                        </h1>
+                      </div>
+                    )}
+
+                    {/* Deskripsi Subtitle Slide */}
+                    {slide.subtitle && (
+                      <div
+                        className="absolute transform -translate-x-1/2 -translate-y-1/2 p-2 sm:p-3 w-11/12 max-w-3xl"
+                        style={{
+                          left: `${slide.subtitlePos?.x ?? 50}%`,
+                          top: `${slide.subtitlePos?.y ?? 62}%`,
+                          textAlign: slide.subtitleAlign || 'center'
+                        }}
+                      >
+                        <p
+                          className="font-medium leading-relaxed drop-shadow-md"
+                          style={{
+                            fontSize: `${slide.subtitleSize ? Math.max(12, slide.subtitleSize * 1.1) : 15}px`,
+                            color: slide.subtitleColor || '#f1f5f9'
+                          }}
+                        >
+                          {slide.subtitle}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
-            <button
-              onClick={prevSlide}
-              aria-label="Slide Sebelumnya"
-              className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
-            >
-              <Icons.ChevronLeft />
-            </button>
-            <button
-              onClick={nextSlide}
-              aria-label="Slide Selanjutnya"
-              className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10"
-            >
-              <Icons.ChevronRight />
-            </button>
-
-            <div className="absolute bottom-6 left-0 right-0 z-30 flex justify-center space-x-2">
-              {slides.map((_, idx) => (
+            {slides.length > 1 && (
+              <>
                 <button
-                  key={idx}
-                  onClick={() => setCurrentSlide(idx)}
-                  className={`h-2.5 rounded-full transition-all duration-300 ${
-                    idx === currentSlide ? 'w-8 bg-[#B89355]' : 'w-2.5 bg-white/40 hover:bg-white/70'
-                  }`}
-                  aria-label={`Ke slide ${idx + 1}`}
-                />
-              ))}
-            </div>
+                  onClick={prevSlide}
+                  aria-label="Slide Sebelumnya"
+                  className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10 cursor-pointer"
+                >
+                  <Icons.ChevronLeft />
+                </button>
+                <button
+                  onClick={nextSlide}
+                  aria-label="Slide Selanjutnya"
+                  className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-900/60 hover:bg-[#1F5946] text-white transition backdrop-blur-md border border-white/10 cursor-pointer"
+                >
+                  <Icons.ChevronRight />
+                </button>
+
+                <div className="absolute bottom-6 left-0 right-0 z-30 flex justify-center space-x-2">
+                  {slides.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentSlide(idx)}
+                      className={`h-2.5 rounded-full transition-all duration-300 ${
+                        idx === activeSlideIdx ? 'w-8 bg-[#B89355]' : 'w-2.5 bg-white/40 hover:bg-white/70'
+                      }`}
+                      aria-label={`Ke slide ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           <div className="w-full h-2 bg-gradient-to-r from-[#1F5946] via-[#B89355] to-[#1F5946] relative z-30"></div>
